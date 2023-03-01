@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "faker": "^5.5.3",
+    "testcafe": "^2.3.1"
+  },
+  "scripts": {
+    "demoTest": "testcafe chrome tests/AddItemsToCartTest.ts"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "@types/faker": "^6.6.9"
+  }
+}
