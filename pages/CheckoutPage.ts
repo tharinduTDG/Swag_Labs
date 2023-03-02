@@ -10,12 +10,11 @@ export default class CheckoutPage {
     this.checkoutButton = Selector('.btn_action.checkout_button');
   }
 
-  //Verify if the selected items are in the cart.
-  public async verifyItemsInCart(firstProd: number, secondProd: number): Promise<void> {
+  //Get the name of two products which are available in the cart
+  public async verifyItemsInCart(firstProd: number, secondProd: number): Promise<{ product1: string; product2: string }> {
     const firstProductInCart = Selector('.cart_item').nth(firstProd).find('.inventory_item_name').innerText;
     const secondProductInCart = Selector('.cart_item').nth(secondProd).find('.inventory_item_name').innerText;
-    await t.expect(firstProductInCart).eql('Sauce Labs Backpack')
-      .expect(secondProductInCart).eql('Sauce Labs Bolt T-Shirt');
+    return { product1: await firstProductInCart, product2: await secondProductInCart };
 
   }
 

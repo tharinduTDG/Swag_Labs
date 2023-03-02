@@ -1,24 +1,26 @@
-import { userVariables } from 'testcafe';
+import { userVariables, Selector } from 'testcafe';
 import CartPage from '../pages/CheckoutPage';
 import LoginPage from '../pages/LoginPage';
 import ProductsPage from '../pages/ProductsPage';
 import InformationPage from '../pages/InformationPage';
 import CheckoutPage from '../pages/CheckoutPage';
 import OverviewPage from '../pages/OverviewPage';
+import * as fs from 'fs';
 
-//Declared variables.
-const username = 'performance_glitch_user';
-const password = 'secret_sauce';
-const product  = 'Sauce Labs Fleece Jacket';
-const productPrice = '$49.99';
+
+
+
 const productId = 3;
 const addtoCartItem1 = 0;
 const addtoCartItem2 = 1;
 
+// Read the .tetcaferc.js file 
+const configFile = fs.readFileSync('./.testcaferc.js', 'utf-8');
+const config = eval(configFile);
 
 
 fixture('Shopping Cart')
-    .page('https://www.saucedemo.com/');
+    .page(config.baseUrl);
 test('Add two items to cart and checkout', async (t) => {
     // Page objects.
     const loginpage = new LoginPage();
@@ -27,12 +29,26 @@ test('Add two items to cart and checkout', async (t) => {
     const infoPage = new InformationPage();
     const overviewPage = new OverviewPage();
 
-    await loginpage.login(username, password);
-    await productsPage.verifyPriceWithProduct(productId,product,productPrice);
-    await productsPage.addToCart(addtoCartItem1,addtoCartItem2);
+    //Login to the system
+    await loginpage.login(config.credentials.username, config.credentials.password);
+
+
+    //Check the price of product, Sauce Labs Fleece Jacket is $49.99
+    const product = await productsPage.getProductDetails(productId);
+    await t.expect(product.name).eql('Sauce Labs Fleece Jacket');
+    await t.expect(product.price).eql('$49.99');
+
+    //Add two items to the cart
+    await productsPage.addToCart(addtoCartItem1, addtoCartItem2);
     await productsPage.selectCart();
-    await checkoutPage.verifyItemsInCart(addtoCartItem1,addtoCartItem2);
+
+    //Verify if the selected items are in the cart
+    const checkout = checkoutPage.verifyItemsInCart(addtoCartItem1, addtoCartItem2);
+    await t.expect((await checkout).product1).eql('Sauce Labs Backpack')
+        .expect((await checkout).product2).eql('Sauce Labs Bolt T-Shirt');
     await checkoutPage.goToCheckout();
+
+    //Provide a random firstname, lastname and a zip code in the next page
     await infoPage.generateInfomation();
     await infoPage.continueOder();
     await overviewPage.finishOder();
