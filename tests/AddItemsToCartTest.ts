@@ -1,11 +1,15 @@
-import { userVariables, Selector } from 'testcafe';
+import { Selector } from 'testcafe';
 import CartPage from '../pages/CheckoutPage';
 import LoginPage from '../pages/LoginPage';
 import ProductsPage from '../pages/ProductsPage';
 import InformationPage from '../pages/InformationPage';
 import CheckoutPage from '../pages/CheckoutPage';
 import OverviewPage from '../pages/OverviewPage';
-import * as fs from 'fs';
+//import * as fs from 'fs';
+//import {config} from '../config';
+
+
+const {userVariables} =require('testcafe');
 
 
 
@@ -15,12 +19,12 @@ const addtoCartItem1 = 0;
 const addtoCartItem2 = 1;
 
 // Read the .tetcaferc.js file 
-const configFile = fs.readFileSync('./.testcaferc.js', 'utf-8');
-const config = eval(configFile);
+//const configFile = fs.readFileSync('./.testcaferc.js', 'utf-8');
+//const config = eval(configFile);
 
 
 fixture('Shopping Cart')
-    .page(config.baseUrl);
+    .page(userVariables.url);
 test('Add two items to cart and checkout', async (t) => {
     // Page objects.
     const loginpage = new LoginPage();
@@ -30,8 +34,8 @@ test('Add two items to cart and checkout', async (t) => {
     const overviewPage = new OverviewPage();
 
     //Login to the system
-    await loginpage.login(config.credentials.username, config.credentials.password);
-
+    //await loginpage.login(config.credentials.username, config.credentials.password);
+    await loginpage.login(userVariables.username, userVariables.password)
 
     //Check the price of product, Sauce Labs Fleece Jacket is $49.99
     const product = await productsPage.getProductDetails(productId);
